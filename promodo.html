@@ -3,68 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pomodoro Focus</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <title>Pomodoro Focus Mode</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-color: #fcfcfc;
+            --pomo-red: #e5989b;
+            --mint: #7db9b6;
+            --text: #444;
+        }
+
         body {
-            background: #fcfcfc; font-family: 'Quicksand', sans-serif;
-            display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;
+            background: var(--bg-color);
+            background-image: radial-gradient(#d1d1d1 1px, transparent 1px);
+            background-size: 25px 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Quicksand', sans-serif;
         }
+
         .pomo-card {
-            background: white; padding: 50px; border-radius: 30px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.05); text-align: center; width: 350px;
+            background: white;
+            padding: 50px 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.05);
+            text-align: center;
+            width: 380px;
+            border: 1px solid #eee;
+            position: relative;
         }
-        .status-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: #e5989b; font-weight: 700; margin-bottom: 10px; display: block; }
-        .timer-display { font-family: 'Montserrat', sans-serif; font-size: 5rem; font-weight: 900; color: #444; margin: 20px 0; }
-        .controls button {
-            background: #f0f0f0; border: none; padding: 15px 30px; border-radius: 15px;
-            font-weight: 600; cursor: pointer; transition: 0.3s; margin: 5px;
+
+        /* Miếng băng dính trang trí cho giống file countdown */
+        .pomo-card::before {
+            content: "";
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 35px;
+            background: rgba(125, 185, 182, 0.2);
+            border-left: 2px dashed rgba(255,255,255,0.5);
+            border-right: 2px dashed rgba(255,255,255,0.5);
         }
-        .controls button:hover { background: #e5989b; color: white; }
-        .back-link { display: block; margin-top: 30px; color: #ccc; text-decoration: none; font-size: 0.8rem; }
+
+        #label {
+            color: var(--pomo-red);
+            font-weight: 700;
+            letter-spacing: 3px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .timer-display {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 6rem;
+            font-weight: 900;
+            color: var(--text);
+            margin: 15px 0;
+            line-height: 1;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            background: var(--mint);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s ease;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        .btn-reset {
+            background: #f0f0f0;
+            color: #888;
+        }
+
+        /* NÚT BACK QUAN TRỌNG NHẤT Ở ĐÂY */
+        .back-home {
+            display: inline-block;
+            margin-top: 35px;
+            color: #bbb;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .back-home:hover {
+            color: var(--pomo-red);
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
+
     <div class="pomo-card">
-        <span class="status-label" id="status">Sẵn sàng học tập?</span>
-        <div class="timer-display" id="timer">25:00</div>
+        <span id="label">FOCUS TIME</span>
+        <div class="timer-display" id="time-display">25:00</div>
+        
         <div class="controls">
-            <button onclick="startTimer()">Bắt đầu</button>
-            <button onclick="resetTimer()">Reset</button>
+            <button class="btn" id="start-btn" onclick="toggleTimer()">Bắt đầu</button>
+            <button class="btn btn-reset" onclick="resetTimer()">Reset</button>
         </div>
-        <a href="countdown.html" class="back-link">← Quay lại đồng hồ đếm ngược</a>
+
+        <a href="countdown.html" class="back-home">← Quay lại trang đếm ngược</a>
     </div>
 
     <script>
         let timeLeft = 25 * 60;
         let timerId = null;
+        let isRunning = false;
+
+        const display = document.getElementById('time-display');
+        const startBtn = document.getElementById('start-btn');
 
         function updateDisplay() {
-            const m = Math.floor(timeLeft / 60);
-            const s = timeLeft % 60;
-            document.getElementById('timer').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+            let mins = Math.floor(timeLeft / 60);
+            let secs = timeLeft % 60;
+            display.innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
         }
 
-        function startTimer() {
-            if (timerId) return;
-            document.getElementById('status').innerText = "Đang tập trung...";
-            timerId = setInterval(() => {
-                timeLeft--;
-                updateDisplay();
-                if (timeLeft <= 0) {
-                    clearInterval(timerId);
-                    alert("Hết giờ! Nghỉ ngơi xíu nhé.");
-                    resetTimer();
-                }
-            }, 1000);
+        function toggleTimer() {
+            if (isRunning) {
+                clearInterval(timerId);
+                startBtn.innerText = "Tiếp tục";
+                isRunning = false;
+            } else {
+                isRunning = true;
+                startBtn.innerText = "Tạm dừng";
+                timerId = setInterval(() => {
+                    timeLeft--;
+                    updateDisplay();
+                    if (timeLeft <= 0) {
+                        clearInterval(timerId);
+                        alert("Tuyệt vời! Bạn đã hoàn thành một phiên tập trung.");
+                        resetTimer();
+                    }
+                }, 1000);
+            }
         }
 
         function resetTimer() {
             clearInterval(timerId);
-            timerId = null;
             timeLeft = 25 * 60;
+            isRunning = false;
+            startBtn.innerText = "Bắt đầu";
             updateDisplay();
-            document.getElementById('status').innerText = "Sẵn sàng học tập?";
         }
     </script>
 </body>
