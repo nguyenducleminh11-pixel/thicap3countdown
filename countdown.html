@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown To Exam 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #fcfcfc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Quicksand', sans-serif;
+            color: #444;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .note {
+            background: #fff;
+            padding: 40px 60px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+            position: relative;
+            transform: rotate(-1deg);
+            max-width: 500px;
+        }
+
+        /* Hiệu ứng ghim giấy */
+        .note::before {
+            content: "";
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 30px;
+            background: rgba(255, 235, 153, 0.6);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            color: #d1a3a4; /* Màu hồng pastel */
+        }
+
+        .countdown-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .item {
+            padding: 10px;
+        }
+
+        .number {
+            font-size: 1.8rem;
+            font-weight: 600;
+            display: block;
+            color: #555;
+        }
+
+        .label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #999;
+        }
+
+        .minutes-total {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px dashed #ddd;
+        }
+
+        .quote {
+            margin-top: 25px;
+            font-style: italic;
+            font-size: 0.9rem;
+            color: #bbb;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="note">
+            <h1>Kỳ thi Cấp 3 đang đến...</h1>
+            
+            <div class="countdown-grid">
+                <div class="item">
+                    <span class="number" id="days">00</span>
+                    <span class="label">Ngày</span>
+                </div>
+                <div class="item">
+                    <span class="number" id="hours">00</span>
+                    <span class="label">Giờ</span>
+                </div>
+            </div>
+
+            <div class="minutes-total">
+                <span class="label">Tổng cộng còn lại</span>
+                <div class="number" id="total-minutes" style="font-size: 2.2rem; color: #7db9b6;">0</div>
+                <span class="label">Phút</span>
+            </div>
+
+            <p class="quote">"Sự nỗ lực của hôm nay là món quà của ngày mai."</p>
+        </div>
+    </div>
+
+    <script>
+        function updateCountdown() {
+            const examDate = new Date('June 5, 2026 00:00:00').getTime();
+            const now = new Date().getTime();
+            const diff = examDate - now;
+
+            // Tính toán thời gian
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor(diff / (1000 * 60)); // Tổng phút còn lại
+
+            // Hiển thị
+            document.getElementById('days').innerText = d < 10 ? '0' + d : d;
+            document.getElementById('hours').innerText = h < 10 ? '0' + h : h;
+            document.getElementById('total-minutes').innerText = m.toLocaleString();
+
+            if (diff < 0) {
+                clearInterval(interval);
+                document.querySelector(".note").innerHTML = "<h1>Chúc bạn thi tốt!</h1>";
+            }
+        }
+
+        const interval = setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+</body>
+</html>
