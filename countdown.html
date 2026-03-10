@@ -3,143 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Countdown To Exam 2026</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <title>Chinh Phục Cấp 3 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;600&family=Quicksand:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-color: #fcfcfc;
+            --accent: #e5989b; /* Màu hồng khô lãng mạn */
+            --sub-accent: #b5828c;
+            --text: #5d5d5d;
+        }
+
         body {
-            background-color: #fcfcfc;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            background-image: 
+                linear-gradient(90deg, rgba(200,0,0,.05) 50%, transparent 0),
+                linear-gradient(rgba(200,0,0,.05) 50%, transparent 0);
+            background-size: 30px 30px; /* Nền giấy kẻ ô mờ */
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            min-height: 100vh;
             font-family: 'Quicksand', sans-serif;
-            color: #444;
+            overflow: hidden;
         }
 
-        .container {
+        /* Container chính */
+        .stage {
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .stage:hover {
+            transform: scale(1.02);
+        }
+
+        /* Lớp giấy trang trí phía sau */
+        .paper-shadow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border: 1px solid #eee;
+            top: 10px;
+            left: 10px;
+            z-index: 1;
+            transform: rotate(2deg);
+        }
+
+        /* Tờ giấy chính */
+        .main-note {
+            position: relative;
+            z-index: 2;
+            background: #ffffff;
+            padding: 50px 40px;
+            width: 400px;
+            box-shadow: 15px 15px 40px rgba(0,0,0,0.03);
+            border: 1px solid #f0f0f0;
             text-align: center;
         }
 
-        .note {
-            background: #fff;
-            padding: 40px 60px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            border: 1px solid #eee;
-            position: relative;
-            transform: rotate(-1deg);
-            max-width: 500px;
-        }
-
-        /* Hiệu ứng ghim giấy */
-        .note::before {
-            content: "";
+        /* Băng keo trang trí */
+        .tape {
             position: absolute;
             top: -15px;
             left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 30px;
-            background: rgba(255, 235, 153, 0.6);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            transform: translateX(-50%) rotate(-2deg);
+            width: 120px;
+            height: 35px;
+            background: rgba(229, 152, 155, 0.2);
+            backdrop-filter: blur(2px);
+            border-left: 2px dashed rgba(255,255,255,0.5);
+            border-right: 2px dashed rgba(255,255,255,0.5);
         }
 
         h1 {
             font-family: 'Dancing Script', cursive;
-            font-size: 2.2rem;
-            margin-bottom: 20px;
-            color: #d1a3a4; /* Màu hồng pastel */
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin: 0 0 30px 0;
         }
 
-        .countdown-grid {
+        /* Grid đồng hồ */
+        .timer-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 20px;
+            margin-bottom: 30px;
         }
 
-        .item {
-            padding: 10px;
+        .time-box {
+            padding: 15px;
+            background: #fffafa;
+            border-radius: 12px;
+            border-bottom: 3px solid #f7e1e1;
         }
 
-        .number {
-            font-size: 1.8rem;
-            font-weight: 600;
+        .num {
             display: block;
-            color: #555;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text);
+            font-family: 'Montserrat', sans-serif;
         }
 
         .label {
-            font-size: 0.8rem;
-            text-transform: uppercase;
+            font-size: 0.7rem;
             letter-spacing: 2px;
-            color: #999;
+            color: #b0b0b0;
+            text-transform: uppercase;
         }
 
-        .minutes-total {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px dashed #ddd;
+        /* Khu vực tổng phút & giây */
+        .total-zone {
+            border-top: 1px dashed #eee;
+            padding-top: 25px;
+        }
+
+        .big-total {
+            font-size: 1.1rem;
+            color: var(--sub-accent);
+            margin-bottom: 5px;
+        }
+
+        #total-sec {
+            font-size: 0.9rem;
+            color: #ccc;
+            font-weight: 300;
         }
 
         .quote {
-            margin-top: 25px;
+            margin-top: 35px;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #999;
             font-style: italic;
-            font-size: 0.9rem;
-            color: #bbb;
+        }
+
+        /* Trang trí cánh hoa bay nhẹ nhàng */
+        .petal {
+            position: absolute;
+            background: #ffebef;
+            border-radius: 150% 0 150% 0;
+            opacity: 0.6;
+            pointer-events: none;
+            animation: fall 10s infinite linear;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); }
+            100% { transform: translateY(110vh) rotate(360deg); }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="note">
-            <h1>Kỳ thi Cấp 3 đang đến...</h1>
+    <div class="stage">
+        <div class="paper-shadow"></div>
+        <div class="main-note">
+            <div class="tape"></div>
+            <h1>The Goal 2026</h1>
             
-            <div class="countdown-grid">
-                <div class="item">
-                    <span class="number" id="days">00</span>
+            <div class="timer-grid">
+                <div class="time-box">
+                    <span class="num" id="d">00</span>
                     <span class="label">Ngày</span>
                 </div>
-                <div class="item">
-                    <span class="number" id="hours">00</span>
+                <div class="time-box">
+                    <span class="num" id="h">00</span>
                     <span class="label">Giờ</span>
                 </div>
             </div>
 
-            <div class="minutes-total">
-                <span class="label">Tổng cộng còn lại</span>
-                <div class="number" id="total-minutes" style="font-size: 2.2rem; color: #7db9b6;">0</div>
-                <span class="label">Phút</span>
+            <div class="total-zone">
+                <div class="big-total">
+                    <span id="m-total">0</span> <small style="font-size: 0.6rem;">PHÚT</small>
+                </div>
+                <div id="total-sec">
+                    <span id="s-total">0</span> giây còn lại
+                </div>
             </div>
 
-            <p class="quote">"Sự nỗ lực của hôm nay là món quà của ngày mai."</p>
+            <p class="quote">
+                "Đừng nhìn vào đồng hồ, hãy làm những gì nó đang làm: Tiếp tục bước đi."
+            </p>
         </div>
     </div>
 
     <script>
-        function updateCountdown() {
-            const examDate = new Date('June 5, 2026 00:00:00').getTime();
+        function createPetal() {
+            const petal = document.createElement('div');
+            petal.className = 'petal';
+            petal.style.left = Math.random() * 100 + 'vw';
+            petal.style.width = Math.random() * 10 + 5 + 'px';
+            petal.style.height = petal.style.width;
+            petal.style.animationDuration = Math.random() * 5 + 5 + 's';
+            document.body.appendChild(petal);
+            setTimeout(() => petal.remove(), 10000);
+        }
+        setInterval(createPetal, 1000);
+
+        function update() {
+            const target = new Date('June 5, 2026 00:00:00').getTime();
             const now = new Date().getTime();
-            const diff = examDate - now;
+            const diff = target - now;
 
-            // Tính toán thời gian
-            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const m = Math.floor(diff / (1000 * 60)); // Tổng phút còn lại
-
-            // Hiển thị
-            document.getElementById('days').innerText = d < 10 ? '0' + d : d;
-            document.getElementById('hours').innerText = h < 10 ? '0' + h : h;
-            document.getElementById('total-minutes').innerText = m.toLocaleString();
-
-            if (diff < 0) {
-                clearInterval(interval);
-                document.querySelector(".note").innerHTML = "<h1>Chúc bạn thi tốt!</h1>";
+            if (diff <= 0) {
+                document.querySelector('.main-note').innerHTML = "<h1>Hành trình bắt đầu!</h1>";
+                return;
             }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            
+            const totalMin = Math.floor(diff / (1000 * 60));
+            const totalSec = Math.floor(diff / 1000);
+
+            document.getElementById('d').innerText = days;
+            document.getElementById('h').innerText = hours < 10 ? '0' + hours : hours;
+            document.getElementById('m-total').innerText = totalMin.toLocaleString();
+            document.getElementById('s-total').innerText = totalSec.toLocaleString();
         }
 
-        const interval = setInterval(updateCountdown, 1000);
-        updateCountdown();
+        setInterval(update, 1000);
+        update();
     </script>
 </body>
 </html>
