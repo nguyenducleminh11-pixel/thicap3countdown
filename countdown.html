@@ -188,40 +188,6 @@ function createSakura() {
 // Tạo sakura mỗi 300ms
 setInterval(createSakura, 300);
 </script>
-<!-- Chat Icon + Popup -->
-<div id="chat-btn" style="
-    position: fixed; bottom: 20px; right: 20px;
-    width: 60px; height: 60px;
-    background: #a3b18a; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 30px; cursor: pointer; z-index: 9999;
-    box-shadow: 0 4px 15px rgba(125,185,182,0.3);
-">💬</div>
-
-<div id="chat-popup" style="
-    position: fixed; bottom: 90px; right: 20px;
-    width: 320px; max-height: 450px;
-    background: #fff; border-radius: 12px;
-    display: none; flex-direction: column;
-    box-shadow: 0 5px 25px rgba(0,0,0,0.2);
-    font-family: 'Quicksand', sans-serif;
-    z-index: 9998;
-">
-    <div id="chat-messages" style="
-        flex:1; padding: 10px; overflow-y: auto;
-        font-size: 0.9rem;
-    "></div>
-    <div style="display:flex; border-top:1px solid #eee;">
-        <input id="chat-input" type="text" placeholder="Gõ tin nhắn..." style="
-            flex:1; padding:10px; border:none; outline:none;
-        "/>
-        <button id="chat-send" style="
-            border:none; background:#d4a373; color:#fff;
-            padding:0 15px; cursor:pointer;
-        ">Send</button>
-    </div>
-</div>
-
 <script>
 const chatBtn = document.getElementById('chat-btn');
 const chatPopup = document.getElementById('chat-popup');
@@ -245,32 +211,59 @@ async function sendMessage(message) {
     chatMessages.appendChild(userDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
-    // Gửi đến Gemini API
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer AIzaSyCAdq-HYkIeJKBN8nUZ_6Vni3WV7Bgcbaw'
-        },
-        body: JSON.stringify({
-            contents: [
-                { role: "system", parts: [{ text: "Bạn là AI truyền động lực, vui vẻ và thân thiện." }] },
-                { role: "user", parts: [{ text: message }] }
-            ]
-        })
-    });
+    try {
+        const res = await fetch(
+            'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateMessage',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer AIzaSyCAdq-HYkIeJKBN8nUZ_6Vni3WV7Bgcbaw'
+                },
+                body: JSON.stringify({
+                    prompt: {
+                        messages: [
+                            {
+                                role: "system",
+                                content: [{ type: "text", text: "Bạn là AI truyền động lực, vui vẻ và thân thiện." }]
+                            },
+                            {
+                                role: "user",
+                                content: [{ type: "text", text: message }]
+                            }
+                        ]
+                    },
+                    temperature: 0.7,
+                    candidateCount: 1,
+                    topP: 0.95
+                })
+            }
+        );
 
-    const data = await res.json();
-    const aiText = data.candidates?.[0]?.content?.parts?.find(p => p.text)?.text || "Mình chưa hiểu 😅";
+        const data = await res.json();
+        const aiText = data?.candidates?.[0]?.content
+            ?.map(p => p.text)
+            .join('') || "Xin lỗi, AI chưa trả lời 😅";
 
-    // Hiển thị tin nhắn AI
-    const aiDiv = document.createElement('div');
-    aiDiv.style.textAlign = 'left';
-    aiDiv.style.marginBottom = '8px';
-    aiDiv.innerHTML = `<b>AI:</b> ${aiText}`;
-    chatMessages.appendChild(aiDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+        // Hiển thị tin nhắn AI
+        const aiDiv = document.createElement('div');
+        aiDiv.style.textAlign = 'left';
+        aiDiv.style.marginBottom = '8px';
+        aiDiv.innerHTML = `<b>AI:</b> ${aiText}`;
+        chatMessages.appendChild(aiDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    } catch (err) {
+        console.error(err);
+        const aiDiv = document.createElement('div');
+        aiDiv.style.textAlign = 'left';
+        aiDiv.style.marginBottom = '8px';
+        aiDiv.innerHTML = `<b>AI:</b> Lỗi khi gọi AI 😅`;
+        chatMessages.appendChild(aiDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
 }
+
+// Gửi khi nhấn nút Send hoặc Enter
 chatSend.addEventListener('click', () => {
     const msg = chatInput.value.trim();
     if (msg) { sendMessage(msg); chatInput.value = ''; }
