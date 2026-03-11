@@ -280,21 +280,18 @@ async function typeEffect(element, text) {
         await new Promise(r => setTimeout(r, 25)); // Tốc độ gõ 25ms/ký tự
     }
 }
-
 async function handleSendMessage() {
     const msg = chatInput.value.trim();
     if (!msg) return;
-    
     chatInput.value = '';
 
-    // Hiển thị tin nhắn người dùng
+    // Hiển thị tin nhắn của bạn
     const userDiv = document.createElement('div');
     userDiv.className = 'user-msg';
     userDiv.innerText = msg;
     chatMessages.appendChild(userDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
 
-    // Tạo box cho AI trả lời
+    // Box chờ của AI
     const aiDiv = document.createElement('div');
     aiDiv.className = 'ai-msg';
     aiDiv.innerText = "...";
@@ -302,31 +299,44 @@ async function handleSendMessage() {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
     try {
-        const API_KEY = 'AIzaSyDemgzT73oVxDd_s4UXhiBZlLmdxs8Ej1c'; // <--- DÁN KEY VÀO ĐÂY
-        const res = await fetch(
-            `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
-            {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{ text: "Bạn là AI truyền động lực cho học sinh lớp 10 năm 2026. Trả lời cực ngắn, tích cực và dùng emoji: " + msg }]
-                    }]
-                })
-            }
-        );
+        // 1. DÙNG KEY MỚI NHẤT BẠN VỪA TẠO (Đừng dán lên đây nữa nha)
+        const API_KEY = 'AIzaSyDemgzT73oVxDd_s4UXhiBZlLmdxs8Ej1c'; 
+
+        // 2. URL CHUẨN (v1beta là bản chạy tốt nhất cho Flash hiện tại)
+        const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+
+        const res = await fetch(URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{ text: "Bạn là AI truyền động lực ôn thi lớp 10. Trả lời cực ngắn, tích cực: " + msg }]
+                }]
+            })
+        });
 
         const data = await res.json();
-        const responseText = data.candidates[0].content.parts[0].text;
-        
-        // Chạy hiệu ứng gõ chữ cho AI
-        await typeEffect(aiDiv, responseText);
+
+        // 3. KIỂM TRA LỖI TRƯỚC KHI ĐỌC DỮ LIỆU
+        if (data.error) {
+            console.error("Lỗi API:", data.error.message);
+            aiDiv.innerText = "Lỗi: " + data.error.message;
+            return;
+        }
+
+        // Kiểm tra xem data có candidates không
+        if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+            const responseText = data.candidates[0].content.parts[0].text;
+            await typeEffect(aiDiv, responseText);
+        } else {
+            aiDiv.innerText = "Gemini đang bận một chút, thử lại sau vài giây nhé! ✨";
+        }
 
     } catch (e) {
-        aiDiv.innerText = "Hic, mình hơi mệt chút, bạn kiểm tra lại Key hoặc mạng nhé! 😅";
+        console.error("Lỗi mạng:", e);
+        aiDiv.innerText = "Không kết nối được với server AI rồi! 🌐";
     }
 }
-
 // Sự kiện Gửi
 chatSend.addEventListener('click', handleSendMessage);
 chatInput.addEventListener('keydown', (e) => {
