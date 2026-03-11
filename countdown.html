@@ -7,16 +7,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;700;800&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #f8f9fa;       /* Màu nền trắng xám dịu */
-            --accent: #d4a373;         /* Màu nâu cam nhạt (vintage) */
-            --sub-accent: #faedcd;     /* Màu kem bơ */
-            --text: #5f6a6a;           /* Màu chữ xám đậm */
-            --highlight: #a3b18a;      /* Màu xanh lá Sage */
+            --accent: #d4a373;
+            --sub-accent: #faedcd;
+            --highlight: #a3b18a;
+            --text: #5f6a6a;
         }
 
         body {
             margin: 0; padding: 0;
-            background-color: #fdf6e3;
+            background: #fdf6e3;
             background-image: linear-gradient(#e9e2c8 1px, transparent 1px);
             background-size: 100% 32px;
             display: flex; justify-content: center; align-items: center;
@@ -25,8 +24,7 @@
             overflow: hidden;
         }
 
-        .stage { position: relative; }
-
+        /* Container chính */
         .main-note {
             position: relative;
             z-index: 2;
@@ -34,231 +32,314 @@
             padding: 45px;
             width: 480px;
             box-shadow: 20px 20px 60px rgba(0,0,0,0.05);
-            border: 1px solid #f2f2f2;
+            border-radius: 12px;
             text-align: center;
             transform: rotate(-0.5deg);
-            border-radius: 12px;
         }
 
+        /* Miếng băng dính trang trí */
         .tape {
-            position: absolute; top: -15px; left: 50%;
+            position: absolute;
+            top: -15px;
+            left: 50%;
             transform: translateX(-50%) rotate(1deg);
-            width: 130px; height: 40px;
+            width: 130px;
+            height: 40px;
             background: rgba(229, 152, 155, 0.25);
             backdrop-filter: blur(2px);
             border-left: 3px dashed rgba(255,255,255,0.4);
             border-right: 3px dashed rgba(255,255,255,0.4);
         }
 
-        h1 { font-family: 'Dancing Script', cursive; font-size: 2.8rem; color: var(--accent); margin: 0 0 20px 0; }
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.8rem;
+            color: var(--accent);
+            margin: 0 0 20px 0;
+        }
 
-        /* Progress Bar */
-        .progress-container { margin-bottom: 30px; text-align: left; }
-        .progress-label { font-size: 0.7rem; color: #999; text-transform: uppercase; letter-spacing: 1px; }
-        .progress-bar-bg { width: 100%; height: 12px; background: #f0f0f0; border-radius: 10px; margin-top: 5px; overflow: hidden; }
-        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--highlight)); transition: width 1s ease; }
+        /* Thanh tiến độ */
+        .progress-bar-bg {
+            width: 100%;
+            height: 12px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
 
-        .label-big { font-size: 0.8rem; letter-spacing: 3px; color: #aaa; text-transform: uppercase; display: block; }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent), var(--highlight));
+            transition: width 1s ease;
+        }
 
-        /* SỐ PHÚT SIÊU TO */
+        .percent-text {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 8px;
+            display: block;
+        }
+
+        /* Đồng hồ đếm ngược */
         .big-minutes {
-            font-family: 'Montserrat', sans-serif; font-size: 4.5rem;
-            font-weight: 800; line-height: 1;
-            background: linear-gradient(45deg, var(--sub-accent), var(--highlight));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin: 15px 0; filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.05));
+            font-family: 'Montserrat', sans-serif;
+            font-size: 4.5rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--accent), var(--highlight));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 15px 0;
         }
 
-        .big-seconds { font-family: 'Montserrat', sans-serif; font-size: 2.5rem; font-weight: 700; color: #999; letter-spacing: 2px; margin-bottom: 20px; }
+        #s-total {
+            font-weight: bold;
+            color: #bbb;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
 
-        /* Nút Pomodoro */
         .pomo-link {
-            display: inline-block; margin-top: 25px; padding: 12px 25px;
-            background: var(--highlight); color: white; text-decoration: none;
-            border-radius: 25px; font-size: 0.85rem; font-weight: 600;
-            transition: 0.3s; box-shadow: 0 4px 15px rgba(125, 185, 182, 0.3);
+            display: inline-block;
+            margin-top: 25px;
+            padding: 12px 25px;
+            background: var(--highlight);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(125,185,182,0.3);
         }
-        .pomo-link:hover { transform: translateY(-3px); background: var(--sub-accent); }
 
-        .quote { margin-top: 35px; font-size: 0.9rem; color: #bbb; font-style: italic; }
+        .pomo-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(125,185,182,0.4);
+        }
 
-        /* Hoa rơi */
-        .petal { position: absolute; background: #ffebee; border-radius: 150% 0 150% 0; opacity: 0.5; pointer-events: none; animation: fall 8s infinite linear; }
-        @keyframes fall { 0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; } 100% { transform: translateY(110vh) rotate(360deg); opacity: 0; } }
+        /* Chat Bot UI */
+        #chat-btn {
+            position: fixed; bottom: 20px; right: 20px;
+            width: 60px; height: 60px;
+            background: var(--highlight);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 30px; cursor: pointer; z-index: 10000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+        #chat-btn:hover { transform: scale(1.1); }
+
+        #chat-popup {
+            position: fixed; bottom: 90px; right: 20px;
+            width: 320px; height: 420px;
+            background: #fff; border-radius: 15px;
+            display: none; flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            z-index: 9999; overflow: hidden;
+            border: 1px solid #eee;
+        }
+
+        .chat-header {
+            background: var(--highlight); color: white;
+            padding: 15px; font-weight: bold; text-align: center;
+        }
+
+        #chat-messages {
+            flex: 1; padding: 15px; overflow-y: auto;
+            font-size: 0.9rem; display: flex; flex-direction: column; gap: 10px;
+            background: #fcfcfc;
+        }
+
+        .ai-msg {
+            background: #e9edc9; padding: 8px 12px;
+            border-radius: 12px 12px 12px 2px;
+            display: inline-block; max-width: 85%; align-self: flex-start;
+            color: #333; line-height: 1.4;
+        }
+
+        .user-msg {
+            background: #faedcd; padding: 8px 12px;
+            border-radius: 12px 12px 2px 12px;
+            display: inline-block; max-width: 85%; align-self: flex-end;
+            color: #333;
+        }
+
+        .chat-input-area {
+            display: flex; padding: 10px; border-top: 1px solid #eee;
+            background: #fff;
+        }
+
+        #chat-input {
+            flex: 1; border: none; outline: none;
+            padding: 8px; font-family: 'Quicksand';
+        }
+
+        #chat-send {
+            background: var(--accent); color: white;
+            border: none; padding: 8px 15px; border-radius: 8px;
+            cursor: pointer; font-weight: bold;
+        }
+
+        /* Hiệu ứng hoa anh đào */
+        .sakura {
+            position: fixed; pointer-events: none;
+            z-index: 1; top: -20px;
+        }
     </style>
 </head>
 <body>
-    <div class="stage">
-        <div class="main-note">
-            <div class="tape"></div>
-            <h1>The Final Sprint</h1>
 
-            <div class="progress-container">
-                <span class="progress-label">Tiến độ mục tiêu: <span id="percent-text">0%</span></span>
-                <div class="progress-bar-bg">
-                    <div class="progress-fill" id="progress-fill"></div>
-                </div>
-            </div>
-
-            <span class="label-big">Tổng số phút còn lại</span>
-            <div class="big-minutes" id="m-total">0</div>
-            <div class="big-seconds" id="s-total">0</div>
-
-            <a href="promodo.html" class="pomo-link">⏱ Tập trung Pomodoro</a>
-
-            <p class="quote">"Sự nỗ lực của hôm nay là nụ cười của ngày mai."</p>
-        </div>
+<div class="main-note">
+    <div class="tape"></div>
+    <h1>The Final Sprint</h1>
+    <div class="progress-bar-bg">
+        <div class="progress-fill" id="progress-fill"></div>
     </div>
+    <span class="percent-text">TIẾN ĐỘ MỤC TIÊU: <span id="percent-text-val">0%</span></span>
+    
+    <div class="big-minutes" id="m-total">0</div>
+    <div id="s-total">0s</div>
+    
+    <a href="#" class="pomo-link">⏱ Tập trung Pomodoro</a>
+    <p style="margin-top: 25px; font-size: 0.85rem; color: #bbb; font-style: italic;">"Sự nỗ lực của hôm nay là nụ cười của ngày mai."</p>
+</div>
 
-    <!-- Chat Icon + Popup -->
-    <div id="chat-btn" style="
-      position: fixed; 
-      bottom: 20px; 
-      right: 20px; 
-      width: 60px; 
-      height: 60px; 
-      background: #a3b18a; 
-      border-radius: 50%; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      font-size: 30px; 
-      cursor: pointer; 
-      z-index: 10000; 
-      box-shadow: 0 4px 15px rgba(125,185,182,0.3);
-    ">💬</div>
-
-    <div id="chat-popup" style="
-      position: fixed; 
-      bottom: 90px; 
-      right: 20px; 
-      width: 320px; 
-      max-height: 450px; 
-      background: #fff; 
-      border-radius: 12px; 
-      display: none; 
-      flex-direction: column; 
-      box-shadow: 0 5px 25px rgba(0,0,0,0.2); 
-      font-family: 'Quicksand', sans-serif; 
-      z-index: 9999;
-    ">
-      <div id="chat-messages" style=" flex:1; padding: 10px; overflow-y: auto; font-size: 0.9rem; "></div>
-      <div style="display:flex; border-top:1px solid #eee;">
-        <input id="chat-input" type="text" placeholder="Gõ tin nhắn..." style=" flex:1; padding:10px; border:none; outline:none; "/>
-        <button id="chat-send" style=" border:none; background:#d4a373; color:#fff; padding:0 15px; cursor:pointer; ">Send</button>
-      </div>
+<div id="chat-btn">💬</div>
+<div id="chat-popup">
+    <div class="chat-header">AI Động Lực 🌸</div>
+    <div id="chat-messages">
+        <div class="ai-msg">Chào bạn! Mình luôn ở đây để cổ vũ bạn ôn thi. Cố gắng lên nhé! ✨</div>
     </div>
+    <div class="chat-input-area">
+        <input id="chat-input" type="text" placeholder="Hỏi AI để lấy động lực..." autocomplete="off">
+        <button id="chat-send">Gửi</button>
+    </div>
+</div>
 
-    <script>
-        // Countdown + Progress
-        function update() {
-            const start = new Date('January 1, 2026').getTime();
-            const target = new Date('June 5, 2026 00:00:00').getTime();
-            const now = new Date().getTime();
-            const totalDuration = target - start;
-            const elapsed = now - start;
-            const percent = Math.min(Math.max((elapsed / totalDuration) * 100, 0), 100);
-            const diff = target - now;
-            if (diff <= 0) {
-                document.querySelector('.main-note').innerHTML = "<h1>Tới lúc tỏa sáng rồi! 🌟</h1>";
-                return;
-            }
-            const totalMin = Math.floor(diff / (1000 * 60));
-            const totalSec = Math.floor(diff / 1000);
-            document.getElementById('m-total').innerText = totalMin.toLocaleString();
-            document.getElementById('s-total').innerText = totalSec.toLocaleString() + "s";
-            document.getElementById('progress-fill').style.width = percent + "%";
-            document.getElementById('percent-text').innerText = percent.toFixed(2) + "%";
-        }
-        setInterval(update, 1000);
-        update();
+<script>
+/* 1. HIỆU ỨNG SAKURA PARALLAX */
+function createSakura() {
+    const s = document.createElement('div');
+    const size = Math.random() * 15 + 10;
+    const depth = Math.random(); 
+    s.className = 'sakura';
+    s.innerText = '🌸';
+    s.style.fontSize = size + 'px';
+    s.style.left = Math.random() * 100 + 'vw';
+    s.style.opacity = 0.4 + depth * 0.6;
+    s.style.filter = `blur(${(1-depth)*2}px)`;
+    s.style.zIndex = Math.floor(depth * 10);
 
-        // Hoa rơi (petals)
-        function createPetal() {
-            const petal = document.createElement('div');
-            petal.className = 'petal';
-            petal.style.left = Math.random() * 100 + 'vw';
-            petal.style.width = Math.random() * 15 + 5 + 'px';
-            petal.style.height = petal.style.width;
-            petal.style.animationDuration = Math.random() * 4 + 6 + 's';
-            document.body.appendChild(petal);
-            setTimeout(() => petal.remove(), 8000);
-        }
-        setInterval(createPetal, 700);
+    const duration = (5 + (1-depth) * 5) * 1000;
+    const anim = s.animate([
+        { transform: 'translateY(-20px) rotate(0deg)' },
+        { transform: `translateY(110vh) rotate(${Math.random()*360}deg)` }
+    ], { duration: duration, easing: 'linear' });
 
-        // Sakura 🌸
-        function createSakura() {
-            const sakura = document.createElement('div');
-            sakura.innerText = '🌸';
-            sakura.style.position = 'fixed';
-            sakura.style.fontSize = (Math.random() * 24 + 16) + 'px';
-            sakura.style.left = Math.random() * 100 + 'vw';
-            sakura.style.top = '-2em';
-            sakura.style.pointerEvents = 'none';
-            sakura.style.opacity = Math.random() * 0.7 + 0.3;
-            sakura.style.zIndex = 9999;
-            const fallDuration = Math.random() * 5 + 5;
-            const sway = Math.random() * 100 - 50;
-            sakura.animate([
-                { transform: 'translateX(0) translateY(0)' },
-                { transform: `translateX(${sway}px) translateY(110vh)` }
-            ], { duration: fallDuration * 1000, iterations: 1, easing: 'linear' });
-            document.body.appendChild(sakura);
-            setTimeout(() => sakura.remove(), fallDuration * 1000);
-        }
-        setInterval(createSakura, 300);
+    document.body.appendChild(s);
+    anim.onfinish = () => s.remove();
+}
+setInterval(createSakura, 400);
 
-        // Chat JS
-        const chatBtn = document.getElementById('chat-btn');
-        const chatPopup = document.getElementById('chat-popup');
-        const chatMessages = document.getElementById('chat-messages');
-        const chatInput = document.getElementById('chat-input');
-        const chatSend = document.getElementById('chat-send');
+/* 2. ĐẾM NGƯỢC THỜI GIAN */
+function updateCountdown() {
+    const target = new Date('June 5, 2026 00:00:00').getTime();
+    const start = new Date('January 1, 2026').getTime();
+    const now = new Date().getTime();
+    const diff = target - now;
+    const totalPath = target - start;
+    const progress = ((now - start) / totalPath) * 100;
 
-        chatBtn.addEventListener('click', () => {
-            chatPopup.style.display = chatPopup.style.display === 'flex' ? 'none' : 'flex';
-            chatPopup.style.flexDirection = 'column';
-        });
+    if (diff <= 0) {
+        document.querySelector('.main-note h1').innerText = "Tỏa sáng thôi! 🌟";
+        document.getElementById('m-total').innerText = "0";
+        return;
+    }
 
-        async function sendMessage(message) {
-            const userDiv = document.createElement('div');
-            userDiv.style.textAlign = 'right';
-            userDiv.style.marginBottom = '8px';
-            userDiv.innerHTML = `<b>You:</b> ${message}`;
-            chatMessages.appendChild(userDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+    document.getElementById('m-total').innerText = Math.floor(diff/(1000*60)).toLocaleString();
+    document.getElementById('s-total').innerText = Math.floor(diff/1000).toLocaleString() + 's';
+    document.getElementById('progress-fill').style.width = Math.min(progress, 100) + '%';
+    document.getElementById('percent-text-val').innerText = Math.max(0, Math.min(progress, 100)).toFixed(2) + '%';
+}
+setInterval(updateCountdown, 1000);
+updateCountdown();
 
-            const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent', {
+/* 3. LOGIC CHAT AI + TYPING EFFECT */
+const chatMessages = document.getElementById('chat-messages');
+const chatInput = document.getElementById('chat-input');
+const chatSend = document.getElementById('chat-send');
+const chatPopup = document.getElementById('chat-popup');
+
+async function typeEffect(element, text) {
+    element.innerHTML = "";
+    for (let i = 0; i < text.length; i++) {
+        element.innerHTML += text.charAt(i);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        await new Promise(r => setTimeout(r, 25)); // Tốc độ gõ 25ms/ký tự
+    }
+}
+
+async function handleSendMessage() {
+    const msg = chatInput.value.trim();
+    if (!msg) return;
+    
+    chatInput.value = '';
+
+    // Hiển thị tin nhắn người dùng
+    const userDiv = document.createElement('div');
+    userDiv.className = 'user-msg';
+    userDiv.innerText = msg;
+    chatMessages.appendChild(userDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    // Tạo box cho AI trả lời
+    const aiDiv = document.createElement('div');
+    aiDiv.className = 'ai-msg';
+    aiDiv.innerText = "...";
+    chatMessages.appendChild(aiDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    try {
+        const API_KEY = 'AIzaSyCAdq-HYkIeJKBN8nUZ_6Vni3WV7Bgcbaw'; // <--- DÁN KEY VÀO ĐÂY
+        const res = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
+            {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'x-goog-api-key': 'YOUR_API_KEY_HERE' },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    contents: [
-                        { role: "system", parts: [{ text: "Bạn là AI truyền động lực, vui vẻ và thân thiện." }] },
-                        { role: "user", parts: [{ text: message }] }
-                    ]
+                    contents: [{
+                        parts: [{ text: "Bạn là AI truyền động lực cho học sinh lớp 10 năm 2026. Trả lời cực ngắn, tích cực và dùng emoji: " + msg }]
+                    }]
                 })
-            });
+            }
+        );
 
-            const data = await res.json();
-            const aiText = data.candidates?.[0]?.content?.parts?.map(p => p.text).join('') || "Mình chưa hiểu 😅";
+        const data = await res.json();
+        const responseText = data.candidates[0].content.parts[0].text;
+        
+        // Chạy hiệu ứng gõ chữ cho AI
+        await typeEffect(aiDiv, responseText);
 
-            const aiDiv = document.createElement('div');
-            aiDiv.style.textAlign = 'left';
-            aiDiv.style.marginBottom = '8px';
-            aiDiv.innerHTML = `<b>AI:</b> ${aiText}`;
-            chatMessages.appendChild(aiDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
+    } catch (e) {
+        aiDiv.innerText = "Hic, mình hơi mệt chút, bạn kiểm tra lại Key hoặc mạng nhé! 😅";
+    }
+}
 
-        chatSend.addEventListener('click', () => {
-            const msg = chatInput.value.trim();
-            if (msg) { sendMessage(msg); chatInput.value = ''; }
-        });
-
-        chatInput.addEventListener('keydown', e => { if (e.key === 'Enter') chatSend.click(); });
-    </script>
-</body>
-</html>entListener('keydown', e => {
-  if (e.key === 'Enter') chatSend.click();
+// Sự kiện Gửi
+chatSend.addEventListener('click', handleSendMessage);
+chatInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') handleSendMessage();
 });
+
+// Đóng mở Popup
+document.getElementById('chat-btn').onclick = () => {
+    const isFlex = chatPopup.style.display === 'flex';
+    chatPopup.style.display = isFlex ? 'none' : 'flex';
+    if (!isFlex) chatInput.focus();
+};
 </script>
+
+</body>
+</html>
