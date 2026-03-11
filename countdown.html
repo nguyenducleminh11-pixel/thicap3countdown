@@ -7,21 +7,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;700;800&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-    --bg-color: #f8f9fa;       /* Màu nền trắng xám dịu */
-    --accent: #d4a373;         /* Màu nâu cam nhạt (vintage) */
-    --sub-accent: #faedcd;     /* Màu kem bơ */
-    --text: #5f6a6a;           /* Màu chữ xám đậm (không bị gắt như màu đen) */
-    --highlight: #a3b18a;      /* Màu xanh lá Sage (rất dịu mắt) */
-}
+            --bg-color: #f8f9fa;       /* Màu nền trắng xám dịu */
+            --accent: #d4a373;         /* Màu nâu cam nhạt (vintage) */
+            --sub-accent: #faedcd;     /* Màu kem bơ */
+            --text: #5f6a6a;           /* Màu chữ xám đậm */
+            --highlight: #a3b18a;      /* Màu xanh lá Sage */
+        }
 
         body {
             margin: 0; padding: 0;
             background-color: #fdf6e3;
-
-background-image: 
-linear-gradient(#e9e2c8 1px, transparent 1px);
-
-background-size: 100% 32px;
+            background-image: linear-gradient(#e9e2c8 1px, transparent 1px);
+            background-size: 100% 32px;
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh;
             font-family: 'Quicksand', sans-serif;
@@ -31,18 +28,17 @@ background-size: 100% 32px;
         .stage { position: relative; }
 
         .main-note {
-    position: relative;
-    z-index: 2;
-    background: #fff;
-    padding: 45px;
-    width: 480px;
-    box-shadow: 20px 20px 60px rgba(0,0,0,0.05);
-    border: 1px solid #f2f2f2;
-    text-align: center;
-    transform: rotate(-0.5deg);
-
-    border-radius: 12px;
-}
+            position: relative;
+            z-index: 2;
+            background: #fff;
+            padding: 45px;
+            width: 480px;
+            box-shadow: 20px 20px 60px rgba(0,0,0,0.05);
+            border: 1px solid #f2f2f2;
+            text-align: center;
+            transform: rotate(-0.5deg);
+            border-radius: 12px;
+        }
 
         .tape {
             position: absolute; top: -15px; left: 50%;
@@ -86,17 +82,17 @@ background-size: 100% 32px;
 
         .quote { margin-top: 35px; font-size: 0.9rem; color: #bbb; font-style: italic; }
 
+        /* Hoa rơi */
         .petal { position: absolute; background: #ffebee; border-radius: 150% 0 150% 0; opacity: 0.5; pointer-events: none; animation: fall 8s infinite linear; }
         @keyframes fall { 0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; } 100% { transform: translateY(110vh) rotate(360deg); opacity: 0; } }
     </style>
 </head>
 <body>
-
     <div class="stage">
         <div class="main-note">
             <div class="tape"></div>
             <h1>The Final Sprint</h1>
-            
+
             <div class="progress-container">
                 <span class="progress-label">Tiến độ mục tiêu: <span id="percent-text">0%</span></span>
                 <div class="progress-bar-bg">
@@ -114,8 +110,70 @@ background-size: 100% 32px;
         </div>
     </div>
 
+    <!-- Chat Icon + Popup -->
+    <div id="chat-btn" style="
+      position: fixed; 
+      bottom: 20px; 
+      right: 20px; 
+      width: 60px; 
+      height: 60px; 
+      background: #a3b18a; 
+      border-radius: 50%; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-size: 30px; 
+      cursor: pointer; 
+      z-index: 10000; 
+      box-shadow: 0 4px 15px rgba(125,185,182,0.3);
+    ">💬</div>
+
+    <div id="chat-popup" style="
+      position: fixed; 
+      bottom: 90px; 
+      right: 20px; 
+      width: 320px; 
+      max-height: 450px; 
+      background: #fff; 
+      border-radius: 12px; 
+      display: none; 
+      flex-direction: column; 
+      box-shadow: 0 5px 25px rgba(0,0,0,0.2); 
+      font-family: 'Quicksand', sans-serif; 
+      z-index: 9999;
+    ">
+      <div id="chat-messages" style=" flex:1; padding: 10px; overflow-y: auto; font-size: 0.9rem; "></div>
+      <div style="display:flex; border-top:1px solid #eee;">
+        <input id="chat-input" type="text" placeholder="Gõ tin nhắn..." style=" flex:1; padding:10px; border:none; outline:none; "/>
+        <button id="chat-send" style=" border:none; background:#d4a373; color:#fff; padding:0 15px; cursor:pointer; ">Send</button>
+      </div>
+    </div>
+
     <script>
-        // Cánh hoa rơi
+        // Countdown + Progress
+        function update() {
+            const start = new Date('January 1, 2026').getTime();
+            const target = new Date('June 5, 2026 00:00:00').getTime();
+            const now = new Date().getTime();
+            const totalDuration = target - start;
+            const elapsed = now - start;
+            const percent = Math.min(Math.max((elapsed / totalDuration) * 100, 0), 100);
+            const diff = target - now;
+            if (diff <= 0) {
+                document.querySelector('.main-note').innerHTML = "<h1>Tới lúc tỏa sáng rồi! 🌟</h1>";
+                return;
+            }
+            const totalMin = Math.floor(diff / (1000 * 60));
+            const totalSec = Math.floor(diff / 1000);
+            document.getElementById('m-total').innerText = totalMin.toLocaleString();
+            document.getElementById('s-total').innerText = totalSec.toLocaleString() + "s";
+            document.getElementById('progress-fill').style.width = percent + "%";
+            document.getElementById('percent-text').innerText = percent.toFixed(2) + "%";
+        }
+        setInterval(update, 1000);
+        update();
+
+        // Hoa rơi (petals)
         function createPetal() {
             const petal = document.createElement('div');
             petal.className = 'petal';
@@ -128,166 +186,79 @@ background-size: 100% 32px;
         }
         setInterval(createPetal, 700);
 
-        // Cập nhật đếm ngược và Progress Bar
-        function update() {
-            const start = new Date('January 1, 2026').getTime();
-            const target = new Date('June 5, 2026 00:00:00').getTime();
-            const now = new Date().getTime();
-            
-            const totalDuration = target - start;
-            const elapsed = now - start;
-            const percent = Math.min(Math.max((elapsed / totalDuration) * 100, 0), 100);
-
-            const diff = target - now;
-            if (diff <= 0) {
-                document.querySelector('.main-note').innerHTML = "<h1>Tới lúc tỏa sáng rồi! 🌟</h1>";
-                return;
-            }
-
-            const totalMin = Math.floor(diff / (1000 * 60));
-            const totalSec = Math.floor(diff / 1000);
-
-            document.getElementById('m-total').innerText = totalMin.toLocaleString();
-            document.getElementById('s-total').innerText = totalSec.toLocaleString() + "s";
-            document.getElementById('progress-fill').style.width = percent + "%";
-            document.getElementById('percent-text').innerText = percent.toFixed(2) + "%";
+        // Sakura 🌸
+        function createSakura() {
+            const sakura = document.createElement('div');
+            sakura.innerText = '🌸';
+            sakura.style.position = 'fixed';
+            sakura.style.fontSize = (Math.random() * 24 + 16) + 'px';
+            sakura.style.left = Math.random() * 100 + 'vw';
+            sakura.style.top = '-2em';
+            sakura.style.pointerEvents = 'none';
+            sakura.style.opacity = Math.random() * 0.7 + 0.3;
+            sakura.style.zIndex = 9999;
+            const fallDuration = Math.random() * 5 + 5;
+            const sway = Math.random() * 100 - 50;
+            sakura.animate([
+                { transform: 'translateX(0) translateY(0)' },
+                { transform: `translateX(${sway}px) translateY(110vh)` }
+            ], { duration: fallDuration * 1000, iterations: 1, easing: 'linear' });
+            document.body.appendChild(sakura);
+            setTimeout(() => sakura.remove(), fallDuration * 1000);
         }
-        setInterval(update, 1000);
-        update();
+        setInterval(createSakura, 300);
+
+        // Chat JS
+        const chatBtn = document.getElementById('chat-btn');
+        const chatPopup = document.getElementById('chat-popup');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const chatSend = document.getElementById('chat-send');
+
+        chatBtn.addEventListener('click', () => {
+            chatPopup.style.display = chatPopup.style.display === 'flex' ? 'none' : 'flex';
+            chatPopup.style.flexDirection = 'column';
+        });
+
+        async function sendMessage(message) {
+            const userDiv = document.createElement('div');
+            userDiv.style.textAlign = 'right';
+            userDiv.style.marginBottom = '8px';
+            userDiv.innerHTML = `<b>You:</b> ${message}`;
+            chatMessages.appendChild(userDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'x-goog-api-key': 'YOUR_API_KEY_HERE' },
+                body: JSON.stringify({
+                    contents: [
+                        { role: "system", parts: [{ text: "Bạn là AI truyền động lực, vui vẻ và thân thiện." }] },
+                        { role: "user", parts: [{ text: message }] }
+                    ]
+                })
+            });
+
+            const data = await res.json();
+            const aiText = data.candidates?.[0]?.content?.parts?.map(p => p.text).join('') || "Mình chưa hiểu 😅";
+
+            const aiDiv = document.createElement('div');
+            aiDiv.style.textAlign = 'left';
+            aiDiv.style.marginBottom = '8px';
+            aiDiv.innerHTML = `<b>AI:</b> ${aiText}`;
+            chatMessages.appendChild(aiDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        chatSend.addEventListener('click', () => {
+            const msg = chatInput.value.trim();
+            if (msg) { sendMessage(msg); chatInput.value = ''; }
+        });
+
+        chatInput.addEventListener('keydown', e => { if (e.key === 'Enter') chatSend.click(); });
     </script>
 </body>
-</html>
-<script>
-function createSakura() {
-    const sakura = document.createElement('div');
-    sakura.innerText = '🌸';
-    sakura.style.position = 'fixed';
-    sakura.style.fontSize = (Math.random() * 24 + 16) + 'px';
-    sakura.style.left = Math.random() * 100 + 'vw';
-    sakura.style.top = '-2em';
-    sakura.style.pointerEvents = 'none';
-    sakura.style.opacity = Math.random() * 0.7 + 0.3;
-    sakura.style.zIndex = 9999;
-    
-    const fallDuration = Math.random() * 5 + 5; // 5-10s
-    const sway = Math.random() * 100 - 50; // +-50px horizontal
-
-    sakura.animate([
-        { transform: 'translateX(0) translateY(0)' },
-        { transform: `translateX(${sway}px) translateY(110vh)` }
-    ], {
-        duration: fallDuration * 1000,
-        iterations: 1,
-        easing: 'linear'
-    });
-
-    document.body.appendChild(sakura);
-    setTimeout(() => sakura.remove(), fallDuration * 1000);
-}
-
-// Tạo sakura mỗi 300ms
-setInterval(createSakura, 300);
-</script>
-<script>
-<!-- Chat Icon + Popup -->
-<div id="chat-btn" style="
-  position: fixed; 
-  bottom: 20px; 
-  right: 20px; 
-  width: 60px; 
-  height: 60px; 
-  background: #a3b18a; 
-  border-radius: 50%; 
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  font-size: 30px; 
-  cursor: pointer; 
-  z-index: 10000; 
-  box-shadow: 0 4px 15px rgba(125,185,182,0.3);
-">💬</div>
-
-<div id="chat-popup" style="
-  position: fixed; 
-  bottom: 90px; 
-  right: 20px; 
-  width: 320px; 
-  max-height: 450px; 
-  background: #fff; 
-  border-radius: 12px; 
-  display: none; 
-  flex-direction: column; 
-  box-shadow: 0 5px 25px rgba(0,0,0,0.2); 
-  font-family: 'Quicksand', sans-serif; 
-  z-index: 9999;
-">
-  <div id="chat-messages" style=" flex:1; padding: 10px; overflow-y: auto; font-size: 0.9rem; "></div>
-  <div style="display:flex; border-top:1px solid #eee;">
-    <input id="chat-input" type="text" placeholder="Gõ tin nhắn..." style=" flex:1; padding:10px; border:none; outline:none; "/>
-    <button id="chat-send" style=" border:none; background:#d4a373; color:#fff; padding:0 15px; cursor:pointer; ">Send</button>
-  </div>
-</div>
-
-<script>
-const chatBtn = document.getElementById('chat-btn');
-const chatPopup = document.getElementById('chat-popup');
-const chatMessages = document.getElementById('chat-messages');
-const chatInput = document.getElementById('chat-input');
-const chatSend = document.getElementById('chat-send');
-
-// bật/tắt popup, giữ icon luôn hiện
-chatBtn.addEventListener('click', () => {
-  if(chatPopup.style.display === 'flex') {
-    chatPopup.style.display = 'none';
-  } else {
-    chatPopup.style.display = 'flex';
-    chatPopup.style.flexDirection = 'column';
-  }
-});
-
-// gửi tin nhắn AI
-async function sendMessage(message) {
-  const userDiv = document.createElement('div');
-  userDiv.style.textAlign = 'right';
-  userDiv.style.marginBottom = '8px';
-  userDiv.innerHTML = `<b>You:</b> ${message}`;
-  chatMessages.appendChild(userDiv);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-
-  const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-goog-api-key': 'YOUR_API_KEY_HERE'
-    },
-    body: JSON.stringify({
-      contents: [
-        { role: "system", parts: [{ text: "Bạn là AI truyền động lực, vui vẻ và thân thiện." }] },
-        { role: "user", parts: [{ text: message }] }
-      ]
-    })
-  });
-
-  const data = await res.json();
-  const aiText = data.candidates?.[0]?.content?.parts?.map(p => p.text).join('') || "Mình chưa hiểu 😅";
-
-  const aiDiv = document.createElement('div');
-  aiDiv.style.textAlign = 'left';
-  aiDiv.style.marginBottom = '8px';
-  aiDiv.innerHTML = `<b>AI:</b> ${aiText}`;
-  chatMessages.appendChild(aiDiv);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-chatSend.addEventListener('click', () => {
-  const msg = chatInput.value.trim();
-  if (msg) {
-    sendMessage(msg);
-    chatInput.value = '';
-  }
-});
-
-chatInput.addEventListener('keydown', e => {
+</html>entListener('keydown', e => {
   if (e.key === 'Enter') chatSend.click();
 });
 </script>
