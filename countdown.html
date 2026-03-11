@@ -157,3 +157,34 @@ background-size: 100% 32px;
     </script>
 </body>
 </html>
+<script>
+function createSakura() {
+    const sakura = document.createElement('div');
+    sakura.innerText = '🌸';
+    sakura.style.position = 'fixed';
+    sakura.style.fontSize = (Math.random() * 24 + 16) + 'px';
+    sakura.style.left = Math.random() * 100 + 'vw';
+    sakura.style.top = '-2em';
+    sakura.style.pointerEvents = 'none';
+    sakura.style.opacity = Math.random() * 0.7 + 0.3;
+    sakura.style.zIndex = 9999;
+    
+    const fallDuration = Math.random() * 5 + 5; // 5-10s
+    const sway = Math.random() * 100 - 50; // +-50px horizontal
+
+    sakura.animate([
+        { transform: 'translateX(0) translateY(0)' },
+        { transform: `translateX(${sway}px) translateY(110vh)` }
+    ], {
+        duration: fallDuration * 1000,
+        iterations: 1,
+        easing: 'linear'
+    });
+
+    document.body.appendChild(sakura);
+    setTimeout(() => sakura.remove(), fallDuration * 1000);
+}
+
+// Tạo sakura mỗi 300ms
+setInterval(createSakura, 300);
+</script>
