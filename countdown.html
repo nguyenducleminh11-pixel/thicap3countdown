@@ -7,17 +7,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;700;800&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #fcfcfc;
-            --accent: #e5989b; 
-            --sub-accent: #b5828c;
-            --text: #444;
-            --highlight: #7db9b6; 
-        }
+    --bg-color: #f8f9fa;       /* Màu nền trắng xám dịu */
+    --accent: #d4a373;         /* Màu nâu cam nhạt (vintage) */
+    --sub-accent: #faedcd;     /* Màu kem bơ */
+    --text: #5f6a6a;           /* Màu chữ xám đậm (không bị gắt như màu đen) */
+    --highlight: #a3b18a;      /* Màu xanh lá Sage (rất dịu mắt) */
+}
 
         body {
             margin: 0; padding: 0;
             background-color: var(--bg-color);
-            background-image: radial-gradient(#d1d1d1 1px, transparent 1px);
+            background-image: radial-gradient(#cbd5e0 1px, transparent 1px);
             background-size: 25px 25px;
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh;
@@ -28,12 +28,18 @@
         .stage { position: relative; }
 
         .main-note {
-            position: relative; z-index: 2;
-            background: #fff; padding: 45px;
-            width: 480px; box-shadow: 20px 20px 60px rgba(0,0,0,0.05);
-            border: 1px solid #f2f2f2; text-align: center;
-            transform: rotate(-0.5deg);
-        }
+    position: relative;
+    z-index: 2;
+    background: #fff;
+    padding: 45px;
+    width: 480px;
+    box-shadow: 20px 20px 60px rgba(0,0,0,0.05);
+    border: 1px solid #f2f2f2;
+    text-align: center;
+    transform: rotate(-0.5deg);
+
+    border-radius: 12px;
+}
 
         .tape {
             position: absolute; top: -15px; left: 50%;
