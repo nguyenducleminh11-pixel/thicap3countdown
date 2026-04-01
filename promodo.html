@@ -111,6 +111,20 @@ font-size:0.85rem;
 color:var(--pomo-red);
 }
 
+/* INPUT MINUTES */
+
+.minute-input{
+margin-top:10px;
+}
+
+.minute-input input{
+padding:8px;
+border-radius:8px;
+border:1px solid #ddd;
+width:120px;
+text-align:center;
+}
+
 /* DICTIONARY */
 
 .dict-box{
@@ -166,7 +180,11 @@ margin-top:5px;
 
 <span id="label">FOCUS TIME</span>
 
-<div class="timer-display" id="time-display">25:00</div>
+<div class="timer-display" id="time-display">00:00</div>
+
+<div class="minute-input">
+<input id="minute-input" type="number" placeholder="Nhập phút...">
+</div>
 
 <div class="controls">
 <button class="btn" id="start-btn" onclick="toggleTimer()">Bắt đầu</button>
@@ -194,7 +212,9 @@ margin-top:5px;
 
 <script>
 
-let timeLeft=25*60;
+/* POMODORO */
+
+let timeLeft=0;
 let timerId=null;
 let isRunning=false;
 
@@ -208,14 +228,33 @@ display.innerText=`${mins}:${secs<10?'0':''}${secs}`;
 }
 
 function toggleTimer(){
+
+if(!isRunning && timeLeft===0){
+
+const minutes=parseInt(document.getElementById("minute-input").value);
+
+if(!minutes || minutes<=0){
+alert("Hãy nhập số phút!");
+return;
+}
+
+timeLeft=minutes*60;
+updateDisplay();
+}
+
 if(isRunning){
+
 clearInterval(timerId);
 startBtn.innerText="Tiếp tục";
 isRunning=false;
+
 }else{
+
 isRunning=true;
 startBtn.innerText="Tạm dừng";
+
 timerId=setInterval(()=>{
+
 timeLeft--;
 updateDisplay();
 
@@ -226,15 +265,21 @@ resetTimer();
 }
 
 },1000);
+
 }
+
 }
 
 function resetTimer(){
+
 clearInterval(timerId);
-timeLeft=25*60;
+
+timeLeft=0;
+display.innerText="00:00";
+
 isRunning=false;
 startBtn.innerText="Bắt đầu";
-updateDisplay();
+
 }
 
 
@@ -251,20 +296,71 @@ result.innerHTML="Đang tra từ...";
 
 try{
 
-const res=await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
-const data=await res.json();
+/* dictionary */
 
-const meaning=data[0].meanings[0].definitions[0].definition;
-const example=data[0].meanings[0].definitions[0].example;
+const dictRes=await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+const dictData=await dictRes.json();
 
-result.innerHTML=
-`<b>${word}</b><br>
-${meaning}
-${example?`<div class="example">Example: ${example}</div>`:""}`;
+const meaning=dictData[0].meanings[0].definitions[0].definition;
+const example=dictData[0].meanings[0].definitions[0].example || "";
+const type=dictData[0].meanings[0].partOfSpeech;
+const phonetic=dictData[0].phonetic || "";
+
+/* translate */
+
+const transRes=await fetch("https://libretranslate.de/translate",{
+
+method:"POST",
+headers:{ "Content-Type":"application/json" },
+
+body:JSON.stringify({
+q:meaning,
+source:"en",
+target:"vi",
+format:"text"
+})
+
+});
+
+const transData=await transRes.json();
+
+const vi=transData.translatedText;
+
+/* related words */
+
+const relRes=await fetch(`https://api.datamuse.com/words?ml=${word}&max=5`);
+const relData=await relRes.json();
+
+let suggestions=relData.map(w=>w.word).join(", ");
+
+
+/* render */
+
+result.innerHTML=`
+
+<b style="font-size:18px">${word}</b><br>
+
+<span style="color:#888">${phonetic} • ${type}</span>
+
+<div style="margin-top:6px">
+<b>🇻🇳 Nghĩa:</b> ${vi}
+</div>
+
+<div style="margin-top:4px">
+<b>📖 English:</b> ${meaning}
+</div>
+
+${example?`<div class="example">Example: ${example}</div>`:""}
+
+<div style="margin-top:8px;color:#777">
+<b>🔗 Related:</b> ${suggestions}
+</div>
+
+`;
 
 }catch{
 
-result.innerHTML="Không tìm thấy từ này.";
+result.innerHTML="Không tìm thấy từ.";
 
 }
 
