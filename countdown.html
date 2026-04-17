@@ -250,8 +250,8 @@ setInterval(createSakura, 400);
 
 /* 2. ĐẾM NGƯỢC THỜI GIAN */
 function updateCountdown() {
-    const target = new Date('June 5, 2026 07:00:00').getTime();
-    const start = new Date('January 1, 2026').getTime();
+    const target = new Date('2026-06-05T07:00:00').getTime();
+const start  = new Date('2026-01-01T00:00:00').getTime();
     const now = new Date().getTime();
     const diff = target - now;
     const totalPath = target - start;
