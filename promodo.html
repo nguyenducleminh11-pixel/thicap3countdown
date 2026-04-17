@@ -27,7 +27,6 @@ height:100vh;
 margin:0;
 font-family:'Quicksand',sans-serif;
 flex-direction:column;
-gap:20px;
 }
 
 .pomo-card{
@@ -111,8 +110,6 @@ font-size:0.85rem;
 color:var(--pomo-red);
 }
 
-/* INPUT MINUTES */
-
 .minute-input{
 margin-top:10px;
 }
@@ -123,52 +120,6 @@ border-radius:8px;
 border:1px solid #ddd;
 width:120px;
 text-align:center;
-}
-
-/* DICTIONARY */
-
-.dict-box{
-background:white;
-width:380px;
-padding:20px;
-border-radius:15px;
-box-shadow:0 10px 30px rgba(0,0,0,0.05);
-}
-
-.dict-input{
-display:flex;
-gap:10px;
-}
-
-.dict-input input{
-flex:1;
-padding:10px;
-border-radius:10px;
-border:1px solid #ddd;
-font-family:'Quicksand';
-}
-
-.dict-input button{
-background:var(--pomo-red);
-color:white;
-border:none;
-padding:10px 15px;
-border-radius:10px;
-cursor:pointer;
-font-size:18px;
-}
-
-#dict-result{
-margin-top:15px;
-font-size:0.9rem;
-line-height:1.5;
-color:#444;
-}
-
-.example{
-color:#888;
-font-style:italic;
-margin-top:5px;
 }
 
 </style>
@@ -195,24 +146,7 @@ margin-top:5px;
 
 </div>
 
-
-<!-- DICTIONARY -->
-
-<div class="dict-box">
-
-<div class="dict-input">
-<input id="word-input" placeholder="Tra từ tiếng Anh...">
-<button onclick="searchWord()">🔍</button>
-</div>
-
-<div id="dict-result"></div>
-
-</div>
-
-
 <script>
-
-/* POMODORO */
 
 let timeLeft=0;
 let timerId=null;
@@ -281,95 +215,6 @@ isRunning=false;
 startBtn.innerText="Bắt đầu";
 
 }
-
-
-/* DICTIONARY */
-
-async function searchWord(){
-
-const word=document.getElementById("word-input").value.trim();
-const result=document.getElementById("dict-result");
-
-if(!word)return;
-
-result.innerHTML="Đang tra từ...";
-
-try{
-
-/* dictionary */
-
-const dictRes=await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
-const dictData=await dictRes.json();
-
-const meaning=dictData[0].meanings[0].definitions[0].definition;
-const example=dictData[0].meanings[0].definitions[0].example || "";
-const type=dictData[0].meanings[0].partOfSpeech;
-const phonetic=dictData[0].phonetic || "";
-
-/* translate */
-
-const transRes=await fetch("https://libretranslate.de/translate",{
-
-method:"POST",
-headers:{ "Content-Type":"application/json" },
-
-body:JSON.stringify({
-q:meaning,
-source:"en",
-target:"vi",
-format:"text"
-})
-
-});
-
-const transData=await transRes.json();
-
-const vi=transData.translatedText;
-
-/* related words */
-
-const relRes=await fetch(`https://api.datamuse.com/words?ml=${word}&max=5`);
-const relData=await relRes.json();
-
-let suggestions=relData.map(w=>w.word).join(", ");
-
-
-/* render */
-
-result.innerHTML=`
-
-<b style="font-size:18px">${word}</b><br>
-
-<span style="color:#888">${phonetic} • ${type}</span>
-
-<div style="margin-top:6px">
-<b>🇻🇳 Nghĩa:</b> ${vi}
-</div>
-
-<div style="margin-top:4px">
-<b>📖 English:</b> ${meaning}
-</div>
-
-${example?`<div class="example">Example: ${example}</div>`:""}
-
-<div style="margin-top:8px;color:#777">
-<b>🔗 Related:</b> ${suggestions}
-</div>
-
-`;
-
-}catch{
-
-result.innerHTML="Không tìm thấy từ.";
-
-}
-
-}
-
-document.getElementById("word-input")
-.addEventListener("keydown",e=>{
-if(e.key==="Enter")searchWord();
-});
 
 </script>
 
