@@ -308,7 +308,7 @@ async function handleSendMessage() {
         const API_KEY = 'AIzaSyCJAUzfD80NevGFdCosDwGmPrpLiqX-opw'; 
 
         // 2. URL CHUẨN (v1beta là bản chạy tốt nhất cho Flash hiện tại)
-        const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY};`;
+        const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY};;
 
         const res = await fetch(URL, {
             method: 'POST',
