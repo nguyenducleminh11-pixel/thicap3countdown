@@ -21,9 +21,10 @@
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh;
             font-family: 'Quicksand', sans-serif;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
+        /* Container chính */
         .main-note {
             position: relative;
             z-index: 2;
@@ -37,6 +38,7 @@
             transform: rotate(-0.5deg);
         }
 
+        /* Miếng băng dính trang trí */
         .tape {
             position: absolute;
             top: -15px;
@@ -57,6 +59,7 @@
             margin: 0 0 20px 0;
         }
 
+        /* Thanh tiến độ */
         .progress-bar-bg {
             width: 100%;
             height: 12px;
@@ -80,6 +83,7 @@
             display: block;
         }
 
+        /* Đồng hồ đếm ngược */
         .big-minutes {
             font-family: 'Montserrat', sans-serif;
             font-size: 4.5rem;
@@ -122,65 +126,7 @@
             box-shadow: 0 6px 20px rgba(125,185,182,0.4);
         }
 
-        #chat-btn {
-            position: fixed; bottom: 20px; right: 20px;
-            width: 60px; height: 60px;
-            background: var(--highlight);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 30px; cursor: pointer; z-index: 10000;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        #chat-popup {
-            position: fixed; bottom: 90px; right: 20px;
-            width: 320px; height: 420px;
-            background: #fff; border-radius: 15px;
-            display: none; flex-direction: column;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            z-index: 9999; overflow: hidden;
-            border: 1px solid #eee;
-        }
-
-        .chat-header {
-            background: var(--highlight); color: white;
-            padding: 15px; font-weight: bold; text-align: center;
-        }
-
-        #chat-messages {
-            flex: 1; padding: 15px; overflow-y: auto;
-            font-size: 0.9rem; display: flex; flex-direction: column; gap: 10px;
-            background: #fcfcfc;
-        }
-
-        .ai-msg {
-            background: #e9edc9; padding: 8px 12px;
-            border-radius: 12px 12px 12px 2px;
-            align-self: flex-start; max-width: 85%;
-            color: #333; line-height: 1.4;
-        }
-
-        .user-msg {
-            background: #faedcd; padding: 8px 12px;
-            border-radius: 12px 12px 2px 12px;
-            align-self: flex-end; max-width: 85%;
-            color: #333;
-        }
-
-        .chat-input-area {
-            display: flex; padding: 10px; border-top: 1px solid #eee;
-        }
-
-        #chat-input {
-            flex: 1; border: none; outline: none; padding: 8px;
-        }
-
-        #chat-send {
-            background: var(--accent); color: white;
-            border: none; padding: 8px 15px; border-radius: 8px;
-            cursor: pointer;
-        }
-
+        /* Hiệu ứng hoa anh đào */
         .sakura {
             position: fixed; pointer-events: none;
             z-index: 1; top: -20px;
@@ -200,20 +146,8 @@
     <div class="big-minutes" id="m-total">0</div>
     <div id="s-total">0s</div>
     <div id="exam-date">05/06/2026 - 06/06/2026</div>
-    <a href="#" class="pomo-link">⏱Đồng Hồ Đếm Ngược</a>
+    <a href="https://nguyenducleminh11-pixel.github.io/thicap3countdown/promodo.html" class="pomo-link">⏱Đồng Hồ Đếm Ngược</a>
     <p style="margin-top: 25px; font-size: 0.85rem; color: #bbb; font-style: italic;">"Don't give up"</p>
-</div>
-
-<div id="chat-btn">💬</div>
-<div id="chat-popup">
-    <div class="chat-header">AI Động Lực 🌸</div>
-    <div id="chat-messages">
-        <div class="ai-msg">Chào bạn! Mình luôn ở đây để cổ vũ bạn ôn thi. Cố gắng lên nhé! ✨</div>
-    </div>
-    <div class="chat-input-area">
-        <input id="chat-input" type="text" placeholder="Hỏi AI để lấy động lực..." autocomplete="off">
-        <button id="chat-send">Gửi</button>
-    </div>
 </div>
 
 <script>
@@ -243,7 +177,6 @@ setInterval(createSakura, 400);
 
 /* 2. ĐẾM NGƯỢC THỜI GIAN */
 function updateCountdown() {
-    // Sử dụng định dạng YYYY/MM/DD để ổn định nhất
     const target = new Date('2026/06/05 07:00:00').getTime();
     const start  = new Date('2026/01/01 00:00:00').getTime();
     const now = new Date().getTime();
@@ -255,13 +188,12 @@ function updateCountdown() {
     if (diff <= 0) {
         document.querySelector('.main-note h1').innerText = "Tỏa sáng thôi! 🌟";
         document.getElementById('m-total').innerText = "0";
-        document.getElementById('s-total').innerText = "Đã đến giờ G!";
+        document.getElementById('s-total').innerText = "Giờ G đã đến!";
         document.getElementById('progress-fill').style.width = '100%';
         document.getElementById('percent-text-val').innerText = '100%';
         return;
     }
 
-    // Cập nhật giao diện
     document.getElementById('m-total').innerText = Math.floor(diff/(1000*60)).toLocaleString();
     document.getElementById('s-total').innerText = Math.floor(diff/1000).toLocaleString() + 's';
     
@@ -271,70 +203,7 @@ function updateCountdown() {
 }
 setInterval(updateCountdown, 1000);
 updateCountdown();
-
-/* 3. LOGIC CHAT AI */
-const chatMessages = document.getElementById('chat-messages');
-const chatInput = document.getElementById('chat-input');
-const chatSend = document.getElementById('chat-send');
-const chatPopup = document.getElementById('chat-popup');
-
-async function typeEffect(element, text) {
-    element.innerHTML = "";
-    for (let i = 0; i < text.length; i++) {
-        element.innerHTML += text.charAt(i);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-        await new Promise(r => setTimeout(r, 20));
-    }
-}
-
-async function handleSendMessage() {
-    const msg = chatInput.value.trim();
-    if (!msg) return;
-    chatInput.value = '';
-
-    const userDiv = document.createElement('div');
-    userDiv.className = 'user-msg';
-    userDiv.innerText = msg;
-    chatMessages.appendChild(userDiv);
-
-    const aiDiv = document.createElement('div');
-    aiDiv.className = 'ai-msg';
-    aiDiv.innerText = "...";
-    chatMessages.appendChild(aiDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-
-    try {
-        const API_KEY = 'AIzaSyCJAUzfD80NevGFdCosDwGmPrpLiqX-opw'; 
-        const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`;
-
-        const res = await fetch(URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [{ text: "Bạn là AI truyền động lực ôn thi lớp 10. Trả lời cực ngắn, tích cực, sử dụng icon: " + msg }]
-                }]
-            })
-        });
-
-        const data = await res.json();
-
-        if (data.candidates && data.candidates[0]?.content) {
-            const responseText = data.candidates[0].content.parts[0].text;
-            await typeEffect(aiDiv, responseText);
-        } else {
-            aiDiv.innerText = "Cố gắng lên bạn nhé! Mình tin bạn làm được! ✨";
-        }
-    } catch (e) {
-        aiDiv.innerText = "Kết nối hơi yếu, nhưng quyết tâm của bạn thì không! Cố lên! 💪";
-    }
-}
-
-chatSend.onclick = handleSendMessage;
-chatInput.onkeydown = (e) => { if (e.key === 'Enter') handleSendMessage(); };
-document.getElementById('chat-btn').onclick = () => {
-    chatPopup.style.display = chatPopup.style.display === 'flex' ? 'none' : 'flex';
-};
 </script>
+
 </body>
 </html>
